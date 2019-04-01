@@ -1,0 +1,11 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "pyplugs"
+author = "Geir Arne Hjelle"
+author-email = "geirarne@gmail.com"
+home-page = "https://github.com/gahjelle/pyplugs"
+classifiers = ["License :: OSI Approved :: MIT License"]
+
