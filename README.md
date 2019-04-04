@@ -25,8 +25,8 @@ You can always download the [latest version of PyPlugs from GitHub](https://gith
 
 To install PyPlugs from the downloaded source, run Flit:
 
-    $ python -m flit install
+    $ python -m flit install --deps production
 
-If you want to change and play with the PyPlugs source code, it will be easier to install it in editable mode:
+If you want to change and play with the PyPlugs source code, you should install it in editable mode:
 
     $ python -m flit install --symlink

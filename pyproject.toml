@@ -1,11 +1,28 @@
 [build-system]
-requires = ["flit"]
-build-backend = "flit.buildapi"
+requires           = ["flit"]
+build-backend      = "flit.buildapi"
 
 [tool.flit.metadata]
-module = "pyplugs"
-author = "Geir Arne Hjelle"
-author-email = "geirarne@gmail.com"
-home-page = "https://github.com/gahjelle/pyplugs"
-classifiers = ["License :: OSI Approved :: MIT License"]
+module             = "pyplugs"
+author             = "Geir Arne Hjelle"
+author-email       = "geirarne@gmail.com"
+home-page          = "https://github.com/gahjelle/pyplugs"
+classifiers        = ["Development Status :: 2 - Pre-Alpha",
+                      "Intended Audience :: Developers",
+                      "License :: OSI Approved :: MIT License",
+                      "Natural Language :: English",
+                      "Operating System :: MacOS",
+                      "Operating System :: Microsoft",
+                      "Operating System :: POSIX :: Linux",
+                      "Programming Language :: Python :: 3.6",
+                      "Programming Language :: Python :: 3.7",
+                      "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords           = "plugin decorator"
 
+# Requirements
+requires-python    = ">=3.6"
+requires           = []
+dev-requires       = ["black", "bumpversion", "flake8", "flit", "mypy"]
+test-requires      = ["pytest", "pytest-cov"]
+doc-requires       = ["mkdocs"]
