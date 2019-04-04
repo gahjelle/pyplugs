@@ -1,6 +1,6 @@
 # PyPlugs
 
-_Decorator based plugin architecture for Python_
+_Decorator based plug-in architecture for Python_
 
 [![Latest version](https://img.shields.io/pypi/v/pyplugs.svg)](https://pypi.org/project/pyplugs/)
 [![Python versions](https://img.shields.io/pypi/pyversions/pyplugs.svg)](https://pypi.org/project/pyplugs/)
@@ -17,3 +17,16 @@ PyPlugs is available at [PyPI](https://pypi.org/project/pyplugs/). You can insta
 ## Using PyPlugs
 
 ...
+
+
+## Installing From Source
+
+You can always download the [latest version of PyPlugs from GitHub](https://github.com/gahjelle/pyplugs). PyPlugs uses [Flit](https://flit.readthedocs.io/) as a setup tool.
+
+To install PyPlugs from the downloaded source, run Flit:
+
+    $ python -m flit install
+
+If you want to change and play with the PyPlugs source code, it will be easier to install it in editable mode:
+
+    $ python -m flit install --symlink
