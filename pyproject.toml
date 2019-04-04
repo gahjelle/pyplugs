@@ -28,7 +28,7 @@ requires-python    = ">=3.6"
 requires           = []
 
 
-[tool.flit.requires-extra]
+[tool.flit.metadata.requires-extra]
 dev                = ["black", "bumpversion", "flake8", "flit", "mypy"]
 doc                = ["mkdocs"]
 test               = ["pytest", "pytest-cov"]
