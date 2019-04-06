@@ -13,8 +13,9 @@ from typing import NamedTuple
 # Type aliases
 PackageName = str
 PluginName = str
+FuncName = str
 
-# Only expose decorated functions outside
+# Only expose decorated functions to the outside
 __all__ = []
 
 
@@ -27,7 +28,9 @@ def expose(func):
 class PluginInfo(NamedTuple):
     """Information about one plug-in"""
 
-    name: PluginName
+    package_name: PackageName
+    plugin_name: PluginName
+    func_name: FuncName
     func: Callable
     description: str
     doc: str
@@ -35,7 +38,7 @@ class PluginInfo(NamedTuple):
 
 
 # Dictionary with information about all registered plug-ins
-_PLUGINS: Dict[PackageName, Dict[PluginName, PluginInfo]] = dict()
+_PLUGINS: Dict[PackageName, Dict[PluginName, Dict[FuncName, PluginInfo]]] = dict()
 
 
 @expose
@@ -45,10 +48,14 @@ def register(_func: Callable = None, *, sort_value: int = 0) -> Callable:
     def decorator_register(func):
         package_name, _, plugin_name = func.__module__.rpartition(".")
         description, _, doc = (func.__doc__ or "").partition("\n\n")
+        func_name = func.__name__
 
         pkg_info = _PLUGINS.setdefault(package_name, dict())
-        pkg_info[plugin_name] = PluginInfo(
-            name=plugin_name,
+        plugin_info = pkg_info.setdefault(plugin_name, dict())
+        plugin_info[func_name] = PluginInfo(
+            package_name=package_name,
+            plugin_name=plugin_name,
+            func_name=func_name,
             func=func,
             description=description,
             doc=textwrap.dedent(doc),
@@ -63,28 +70,39 @@ def register(_func: Callable = None, *, sort_value: int = 0) -> Callable:
 
 @expose
 def names(package):
-    """List all plugins in one package"""
+    """List all plug-ins in one package"""
     _import_all(package)
-    return sorted(_PLUGINS[package])
+    return sorted(_PLUGINS[package].keys())
 
 
 @expose
-def info(package, plugin):
+def funcs(package, plugin):
+    """List all functions in one plug-in"""
+    _import(package, plugin)
+    plugin_info = _PLUGINS[package][plugin]
+    return list(plugin_info.keys())
+
+
+@expose
+def info(package, plugin, func=None):
     """Get information about a plug-in"""
     _import(package, plugin)
-    return _PLUGINS[package][plugin]
+
+    plugin_info = _PLUGINS[package][plugin]
+    func = next(iter(plugin_info.keys())) if func is None else func
+    return plugin_info[func]
 
 
 @expose
-def get(package, plugin):
+def get(package, plugin, func=None):
     """Get a given plugin"""
-    return info(package, plugin).func
+    return info(package, plugin, func).func
 
 
 @expose
-def call(package, plugin, *args, **kwargs):
+def call(package, plugin, func=None, *args, **kwargs):
     """Call the given plugin"""
-    plugin_func = get(package, plugin)
+    plugin_func = get(package, plugin, func)
     return plugin_func(*args, **kwargs)
 
 
@@ -108,6 +126,12 @@ def _import_all(package):
 def names_factory(package):
     """Create a names() function for one package"""
     return functools.partial(names, package)
+
+
+@expose
+def funcs_factory(package):
+    """Create a funcs() function for one package"""
+    return functools.partial(funcs, package)
 
 
 @expose
