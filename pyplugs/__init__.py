@@ -18,7 +18,7 @@ from pyplugs._plugins import *  # noqa
 # Version of PyPlugs.
 #
 # This is automatically set using the bumpversion tool
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 # Authors of Midgard.
