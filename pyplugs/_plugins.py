@@ -65,6 +65,7 @@ def register(_func: Callable = None, *, sort_value: int = 0) -> Callable:
             module_doc=module_doc,
             sort_value=sort_value,
         )
+        return func
 
     if _func is None:
         return decorator_register
