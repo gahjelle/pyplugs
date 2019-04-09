@@ -6,6 +6,7 @@
 import functools
 import importlib
 import pathlib
+import sys
 import textwrap
 from typing import Callable, Dict
 from typing import NamedTuple
@@ -34,6 +35,7 @@ class PluginInfo(NamedTuple):
     func: Callable
     description: str
     doc: str
+    module_doc: str
     sort_value: int
 
 
@@ -49,6 +51,7 @@ def register(_func: Callable = None, *, sort_value: int = 0) -> Callable:
         package_name, _, plugin_name = func.__module__.rpartition(".")
         description, _, doc = (func.__doc__ or "").partition("\n\n")
         func_name = func.__name__
+        module_doc = sys.modules[func.__module__].__doc__
 
         pkg_info = _PLUGINS.setdefault(package_name, dict())
         plugin_info = pkg_info.setdefault(plugin_name, dict())
@@ -59,6 +62,7 @@ def register(_func: Callable = None, *, sort_value: int = 0) -> Callable:
             func=func,
             description=description,
             doc=textwrap.dedent(doc),
+            module_doc=module_doc,
             sort_value=sort_value,
         )
 
@@ -132,6 +136,12 @@ def names_factory(package):
 def funcs_factory(package):
     """Create a funcs() function for one package"""
     return functools.partial(funcs, package)
+
+
+@expose
+def info_factory(package):
+    """Create a info() function for one package"""
+    return functools.partial(info, package)
 
 
 @expose
