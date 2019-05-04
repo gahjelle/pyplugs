@@ -1,0 +1,5 @@
+site_name: PyPlugs
+theme: readthedocs
+nav:
+  - Home: index.md
+  - API: api.md
