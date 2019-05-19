@@ -50,12 +50,14 @@ _PLUGINS: Dict[str, Dict[str, Dict[str, PluginInfo]]] = dict()
 
 @overload
 def register(func: None, *, sort_value: int) -> Callable[[Plugin], Plugin]:
-    ...
+    """Signature for using decorator with parameters"""
+    ...  # pragma: nocover
 
 
 @overload
 def register(func: Plugin) -> Plugin:
-    ...
+    """Signature for using decorator without parameters"""
+    ...  # pragma: nocover
 
 
 @expose

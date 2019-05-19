@@ -35,8 +35,8 @@ def plugin_package():
 #
 def test_package_not_empty(plugin_package):
     """Test that names() finds some plugins in package"""
-    parsers = pyplugs.names(plugin_package)
-    assert len(parsers) > 0
+    plugins = pyplugs.names(plugin_package)
+    assert len(plugins) > 0
 
 
 def test_package_empty():
@@ -45,26 +45,33 @@ def test_package_empty():
     assert len(lib_plugins) == 0
 
 
+def test_list_funcs(plugin_package):
+    """Test that funcs() finds some plugins in package"""
+    plugins = pyplugs.funcs(plugin_package, "plugin_parts")
+    assert len(plugins) == 3
+
+
 def test_package_non_existing():
     """Test that a non-existent package raises an appropriate error"""
-    with pytest.raises(exceptions.UnknownPackageError):
-        pyplugs.names("midgard.non_existent")
+    with pytest.raises(pyplugs.UnknownPackageError):
+        pyplugs.names("pyplugs.non_existent")
 
 
 def test_plugin_exists(plugin_package):
-    """Test that an existing plugin returns True for exists()"""
+    """Test that an existing plugin returns its own plugin name"""
     plugin_name = pyplugs.names(plugin_package)[0]
-    assert pyplugs.exists(plugin_package, plugin_name)
+    assert pyplugs.info(plugin_package, plugin_name).plugin_name == plugin_name
 
 
-@pytest.mark.parametrize("plugin_name", ["_plugins", "non_existent"])
-def test_plugin_not_exists(plugin_name):
-    """Test that a non-existing plugin returns False for exists()
+@pytest.mark.parametrize("plugin_name", ["no_plugins", "non_existent"])
+def test_plugin_not_exists(plugin_package, plugin_name):
+    """Test that a non-existing plugin raises UnknownPluginError
 
-    Tests both for an existing module (pyplugs._plugins) and a non-existent module
-    (pyplugs.non_existent).
+    Tests both for an existing module (no_plugins) and a non-existent module
+    (non_existent).
     """
-    assert not pyplugs.exists("pyplugs", plugin_name)
+    with pytest.raises(pyplugs.UnknownPluginError):
+        pyplugs.info(plugin_package, plugin_name)
 
 
 def test_call_existing_plugin(plugin_package):
@@ -76,7 +83,7 @@ def test_call_existing_plugin(plugin_package):
 
 def test_call_non_existing_plugin():
     """Test that calling a non-existing plugin raises an error"""
-    with pytest.raises(exceptions.UnknownPluginError):
+    with pytest.raises(pyplugs.UnknownPluginError):
         pyplugs.call("pyplugs", "non_existent")
 
 
@@ -91,68 +98,71 @@ def test_default_part(plugin_package):
     """Test that first registered function in a plugin is called by default"""
     plugin_name = "plugin_parts"
     default = pyplugs.call(plugin_package, plugin_name)
-    explicit = pyplugs.call(plugin_package, plugin_name, part="plugin_default")
+    explicit = pyplugs.call(plugin_package, plugin_name, func="plugin_default")
     assert default == explicit
 
 
-def test_named_parts(plugin_package):
-    """Test that a named part inside a plugin can be called"""
+def test_call_non_existing_func(plugin_package):
+    """Test that calling a non-existing plug-in function raises an error"""
     plugin_name = "plugin_parts"
-    part_name = "named_part"
-    assert pyplugs.call(plugin_package, plugin_name, part=part_name) == "named"
-
-
-def test_named_part_not_in_parts(plugin_package):
-    """Test that named parts are kept separate from unnamed parts"""
-    plugin_name = "plugin_parts"
-    part_name = "named_part"
-    assert part_name not in pyplugs.parts(plugin_package, plugin_name)
-
-
-def test_all_plugins(plugin_package):
-    """Test that call_all calls all plugins"""
-    results = pyplugs.call_all(plugin_package)
-    assert isinstance(results, dict)
-    assert len(results) > 1
-
-
-def test_call_non_existing_part(plugin_package):
-    """Test that calling a non-existing part raises an error"""
-    plugin_name = "plugin_parts"
-    part_name = "non_existent"
-    with pytest.raises(exceptions.UnknownPluginError):
-        pyplugs.call(plugin_package, plugin_name, part=part_name)
-
-
-def test_logger(capsys, plugin_package):
-    """Test that using a logger prints to stdout"""
-    plugin_name = "plugin_plain"
-    pyplugs.call(plugin_package, plugin_name, plugin_logger=print)
-    stdout, stderr = capsys.readouterr()
-
-    assert len(stdout) > 0
-    assert stderr == ""
+    func_name = "non_existent"
+    with pytest.raises(pyplugs.UnknownPluginFunctionError):
+        pyplugs.call(plugin_package, plugin_name, func=func_name)
 
 
 def test_short_doc(plugin_package):
     """Test that we can retrieve the short docstring from a plugin"""
     plugin_name = "plugin_plain"
-    doc = pyplugs.doc(plugin_package, plugin_name, long_doc=False)
+    doc = pyplugs.info(plugin_package, plugin_name).description
     assert doc == "A plain plugin"
 
 
 def test_long_doc(plugin_package):
     """Test that we can retrieve the long docstring from a plugin"""
     plugin_name = "plugin_plain"
-    doc = pyplugs.doc(plugin_package, plugin_name, long_doc=True)
+    doc = pyplugs.info(plugin_package, plugin_name).doc
     assert doc == "This is the plain docstring."
 
 
-def test_all_docs(plugin_package):
-    """Test that we can retrieve the docstrings from all plugins"""
-    docs = pyplugs.doc_all(plugin_package, long_doc=False)
-    assert len(docs) > 1
+def test_names_factory(plugin_package):
+    """Test that the names factory can retrieve names in package"""
+    names = pyplugs.names_factory(plugin_package)
+    factory_names = names()
+    pyplugs_names = pyplugs.names(plugin_package)
+    assert factory_names == pyplugs_names
 
-    plugin_name = "plugin_plain"
-    assert plugin_name in docs
-    assert docs[plugin_name] == "A plain plugin"
+
+def test_funcs_factory(plugin_package):
+    """Test that the funcs factory can retrieve funcs within plugin"""
+    plugin_name = "plugin_parts"
+    funcs = pyplugs.funcs_factory(plugin_package)
+    factory_funcs = funcs(plugin_name)
+    pyplugs_funcs = pyplugs.funcs(plugin_package, plugin_name)
+    assert factory_funcs == pyplugs_funcs
+
+
+def test_info_factory(plugin_package):
+    """Test that the info factory can retrieve info in package"""
+    plugin_name = "plugin_parts"
+    info = pyplugs.info_factory(plugin_package)
+    factory_info = info(plugin_name)
+    pyplugs_info = pyplugs.info(plugin_package, plugin=plugin_name)
+    assert factory_info == pyplugs_info
+
+
+def test_get_factory(plugin_package):
+    """Test that the get factory can retrieve get in package"""
+    plugin_name = "plugin_parts"
+    get = pyplugs.get_factory(plugin_package)
+    factory_get = get(plugin_name)
+    pyplugs_get = pyplugs.get(plugin_package, plugin=plugin_name)
+    assert factory_get == pyplugs_get
+
+
+def test_call_factory(plugin_package):
+    """Test that the call factory can retrieve call in package"""
+    plugin_name = "plugin_parts"
+    call = pyplugs.call_factory(plugin_package)
+    factory_call = call(plugin_name)
+    pyplugs_call = pyplugs.call(plugin_package, plugin=plugin_name)
+    assert factory_call == pyplugs_call
