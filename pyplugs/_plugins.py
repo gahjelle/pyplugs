@@ -8,19 +8,19 @@ import importlib
 import pathlib
 import sys
 import textwrap
-from typing import Callable, Dict
+from typing import Any, Callable, Dict, List, Optional
 from typing import NamedTuple
+from typing import overload, TypeVar
 
 # Type aliases
-PackageName = str
-PluginName = str
-FuncName = str
+T = TypeVar("T")
+Plugin = Callable[..., Any]
 
 # Only expose decorated functions to the outside
 __all__ = []
 
 
-def expose(func):
+def expose(func: Callable[..., T]) -> Callable[..., T]:
     """Add function to __all__ so it will be exposed at the top level"""
     __all__.append(func.__name__)
     return func
@@ -29,29 +29,41 @@ def expose(func):
 class PluginInfo(NamedTuple):
     """Information about one plug-in"""
 
-    package_name: PackageName
-    plugin_name: PluginName
-    func_name: FuncName
-    func: Callable
+    package_name: str
+    plugin_name: str
+    func_name: str
+    func: Plugin
     description: str
     doc: str
     module_doc: str
-    sort_value: int
+    sort_value: float
 
 
 # Dictionary with information about all registered plug-ins
-_PLUGINS: Dict[PackageName, Dict[PluginName, Dict[FuncName, PluginInfo]]] = dict()
+_PLUGINS: Dict[str, Dict[str, Dict[str, PluginInfo]]] = dict()
+
+
+@overload
+def register(func: None, *, sort_value: int) -> Callable[[Plugin], Plugin]:
+    ...
+
+
+@overload
+def register(func: Plugin) -> Plugin:
+    ...
 
 
 @expose
-def register(_func: Callable = None, *, sort_value: int = 0) -> Callable:
+def register(
+    _func: Optional[Plugin] = None, *, sort_value: float = 0
+) -> Callable[..., Any]:
     """Decorator for registering a new plug-in"""
 
-    def decorator_register(func):
+    def decorator_register(func: Callable[..., T]) -> Callable[..., T]:
         package_name, _, plugin_name = func.__module__.rpartition(".")
         description, _, doc = (func.__doc__ or "").partition("\n\n")
         func_name = func.__name__
-        module_doc = sys.modules[func.__module__].__doc__
+        module_doc = sys.modules[func.__module__].__doc__ or ""
 
         pkg_info = _PLUGINS.setdefault(package_name, dict())
         plugin_info = pkg_info.setdefault(plugin_name, dict())
@@ -74,14 +86,14 @@ def register(_func: Callable = None, *, sort_value: int = 0) -> Callable:
 
 
 @expose
-def names(package):
+def names(package: str) -> List[str]:
     """List all plug-ins in one package"""
     _import_all(package)
     return sorted(_PLUGINS[package].keys())
 
 
 @expose
-def funcs(package, plugin):
+def funcs(package: str, plugin: str) -> List[str]:
     """List all functions in one plug-in"""
     _import(package, plugin)
     plugin_info = _PLUGINS[package][plugin]
@@ -89,7 +101,7 @@ def funcs(package, plugin):
 
 
 @expose
-def info(package, plugin, func=None):
+def info(package: str, plugin: str, func: Optional[str] = None) -> PluginInfo:
     """Get information about a plug-in"""
     _import(package, plugin)
 
@@ -99,27 +111,29 @@ def info(package, plugin, func=None):
 
 
 @expose
-def get(package, plugin, func=None):
+def get(package: str, plugin: str, func: Optional[str] = None) -> Plugin:
     """Get a given plugin"""
     return info(package, plugin, func).func
 
 
 @expose
-def call(package, plugin, func=None, *args, **kwargs):
+def call(
+    package: str, plugin: str, func: Optional[str] = None, *args: Any, **kwargs: Any
+) -> Any:
     """Call the given plugin"""
     plugin_func = get(package, plugin, func)
     return plugin_func(*args, **kwargs)
 
 
-def _import(package, plugin):
+def _import(package: str, plugin: str) -> None:
     """Import the given plugin file from a package"""
     importlib.import_module(f"{package}.{plugin}")
 
 
-def _import_all(package):
+def _import_all(package: str) -> None:
     """Import all plugins in a package"""
     pkg = importlib.import_module(package)
-    pkg_paths = [pathlib.Path(p) for p in pkg.__path__]
+    pkg_paths = [pathlib.Path(p) for p in pkg.__file__]
     for pkg_path in pkg_paths:
         for path in pkg_path.iterdir():
             plugin = path.stem
@@ -128,30 +142,30 @@ def _import_all(package):
 
 
 @expose
-def names_factory(package):
+def names_factory(package: str) -> Callable[[], List[str]]:
     """Create a names() function for one package"""
     return functools.partial(names, package)
 
 
 @expose
-def funcs_factory(package):
+def funcs_factory(package: str) -> Callable[[str], List[str]]:
     """Create a funcs() function for one package"""
     return functools.partial(funcs, package)
 
 
 @expose
-def info_factory(package):
+def info_factory(package: str) -> Callable[[str, Optional[str]], PluginInfo]:
     """Create a info() function for one package"""
     return functools.partial(info, package)
 
 
 @expose
-def get_factory(package):
+def get_factory(package: str) -> Callable[[str, Optional[str]], Plugin]:
     """Create a get() function for one package"""
     return functools.partial(get, package)
 
 
 @expose
-def call_factory(package):
+def call_factory(package: str) -> Callable[..., Any]:
     """Create a call() function for one package"""
     return functools.partial(call, package)
