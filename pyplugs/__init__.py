@@ -1,6 +1,6 @@
 """PyPlugs, decorator based plug-in architecture for Python
 
-
+See {url} for more information.
 
 Current maintainers:
 --------------------
@@ -21,7 +21,11 @@ from pyplugs._plugins import *  # noqa
 __version__ = "0.2.1"
 
 
-# Authors of Midgard.
+# Homepage for PyPlugs
+__url__ = "https://pyplugs.readthedocs.io/"
+
+
+# Authors/maintainers of Pyplugs
 _Author = _namedtuple("_Author", ["name", "email", "start", "end"])
 _AUTHORS = [
     _Author("Geir Arne Hjelle", "geirarne@gmail.com", _date(2019, 4, 1), _date.max)
@@ -48,7 +52,7 @@ def _update_doc(doc: str) -> str:
     maintainers = "\n".join(maintainer_list)
 
     # Add to doc-string
-    return doc.format(maintainers=maintainers)
+    return doc.format(maintainers=maintainers, url=__url__)
 
 
 __doc__ = _update_doc(__doc__)
