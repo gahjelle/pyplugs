@@ -12,10 +12,5 @@ def plugin_next():
 
 
 @pyplugs.register
-def plugin_named():
-    return "named"
-
-
-@pyplugs.register
-def plugin_last():
-    return "last"
+def plugin_final():
+    return "final"
