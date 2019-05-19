@@ -14,3 +14,7 @@ class UnknownPackageError(PyplugsException):
 
 class UnknownPluginError(PyplugsException):
     """Pyplugs could not locate the given plugin"""
+
+
+class UnknownPluginFunctionError(PyplugsException):
+    """Pyplugs could not locate the given function within a plugin"""
