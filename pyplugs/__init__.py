@@ -14,6 +14,7 @@ from collections import namedtuple as _namedtuple
 
 # Include PyPlugs functions at top level
 from pyplugs._plugins import *  # noqa
+from pyplugs._exceptions import *  # noqa
 
 # Version of PyPlugs.
 #
