@@ -12,9 +12,14 @@ from typing import Any, Callable, Dict, List, Optional
 from typing import NamedTuple
 from typing import overload, TypeVar
 
+# Pyplugs imports
+from pyplugs import _exceptions
+
+
 # Type aliases
 T = TypeVar("T")
 Plugin = Callable[..., Any]
+
 
 # Only expose decorated functions to the outside
 __all__ = []
@@ -73,7 +78,7 @@ def register(
             func_name=func_name,
             func=func,
             description=description,
-            doc=textwrap.dedent(doc),
+            doc=textwrap.dedent(doc).strip(),
             module_doc=module_doc,
             sort_value=sort_value,
         )
@@ -89,7 +94,7 @@ def register(
 def names(package: str) -> List[str]:
     """List all plug-ins in one package"""
     _import_all(package)
-    return sorted(_PLUGINS[package].keys())
+    return sorted(_PLUGINS[package].keys(), key=lambda p: info(package, p).sort_value)
 
 
 @expose
@@ -105,9 +110,22 @@ def info(package: str, plugin: str, func: Optional[str] = None) -> PluginInfo:
     """Get information about a plug-in"""
     _import(package, plugin)
 
-    plugin_info = _PLUGINS[package][plugin]
+    try:
+        plugin_info = _PLUGINS[package][plugin]
+    except KeyError:
+        raise _exceptions.UnknownPluginError(
+            f"Could not find any plug-in named {plugin!r} inside {package!r}. "
+            "Use pyplugs.register to register functions as plug-ins"
+        )
+
     func = next(iter(plugin_info.keys())) if func is None else func
-    return plugin_info[func]
+    try:
+        return plugin_info[func]
+    except KeyError:
+        raise _exceptions.UnknownPluginFunctionError(
+            f"Could not find any function named {func!r} inside '{package}.{plugin}'. "
+            "Use pyplugs.register to register plug-in functions"
+        )
 
 
 @expose
@@ -127,13 +145,25 @@ def call(
 
 def _import(package: str, plugin: str) -> None:
     """Import the given plugin file from a package"""
-    importlib.import_module(f"{package}.{plugin}")
+    plugin_module = f"{package}.{plugin}"
+    try:
+        importlib.import_module(plugin_module)
+    except ImportError as err:
+        raise _exceptions.UnknownPluginError(err) from None
 
 
 def _import_all(package: str) -> None:
     """Import all plugins in a package"""
-    pkg = importlib.import_module(package)
-    pkg_paths = [pathlib.Path(p) for p in pkg.__file__]
+    try:
+        pkg = importlib.import_module(package)
+    except ImportError as err:
+        raise _exceptions.UnknownPackageError(err) from None
+
+    # Note that we have tried to import the package by adding it to _PLUGINS
+    _PLUGINS.setdefault(package, dict())
+
+    # Loop through all files in the directories of the package
+    pkg_paths = [pathlib.Path(p) for p in pkg.__path__]  # type: ignore
     for pkg_path in pkg_paths:
         for path in pkg_path.iterdir():
             plugin = path.stem
