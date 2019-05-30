@@ -40,5 +40,5 @@ workflows:
 
   development-workflow:
     jobs:
-      - "python3.6"
-      - "python3.7"
+      - "python-3.6"
+      - "python-3.7"
