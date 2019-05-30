@@ -10,7 +10,7 @@ jobs:
       - run:
           name: Install
           command: |
-            python -m pip install flit
+            python -m pip install flit --user
             python -m flit install --deps=develop
       - run:
           name: Test
