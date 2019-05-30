@@ -10,7 +10,7 @@ jobs:
       - run:
           name: Pyenv
           command: |
-            sudo apt install pyenv
+            curl https://pyenv.run | bash
             python -m pip install tox tox-pyenv --user
             pyenv local 3.6.8 3.7.3
       - run:
