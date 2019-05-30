@@ -9,30 +9,26 @@ shared: &shared
           command: |
             python -m pip install flit --user
             python -m flit install --deps=develop
+      - run:
+          name: Test
+          command: |
+            python -m tox --recreate
 
 jobs:
-  "python-3.6":
+  "py-36":
     <<: *shared
     docker:
       - image: circleci/python:3.6
 
-    steps:
-      - run:
-          name: Test
-          command: |
-            python -m tox -e py36
-
-
-  "python-3.7":
+  "py-37":
     <<: *shared
     docker:
       - image: circleci/python:3.7
 
-    steps:
-      - run:
-          name: Test
-          command: |
-            python -m tox -e py37 black mypy
+  "py-38":
+    <<: *shared
+    docker:
+      - image: circleci/python:3.8
 
 
 workflows:
@@ -40,5 +36,6 @@ workflows:
 
   development-workflow:
     jobs:
-      - "python-3.6"
-      - "python-3.7"
+      - "test-py36"
+      - "test-py37"
+      - "test-py38"
