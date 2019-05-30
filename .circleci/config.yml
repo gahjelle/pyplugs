@@ -1,0 +1,26 @@
+version: 2
+
+jobs:
+  development:
+    docker:
+      - image: circleci/python:3.6
+
+    steps:
+      - checkout
+      - run:
+          name: Install
+          command: |
+            python -m pip install flit
+            python -m flit install --deps=develop
+      - run:
+          name: Test
+          command: |
+            python -m tox
+
+
+workflows:
+  version: 2
+
+  development-workflow:
+    jobs:
+      - development
