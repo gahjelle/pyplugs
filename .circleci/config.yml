@@ -1,27 +1,38 @@
 version: 2
 
-jobs:
-  development:
-    docker:
-      - image: circleci/python:3.7
-
+shared: &shared
+    working_directory: ~/circleci-pyplugs
     steps:
       - checkout
-      - run:
-          name: Pyenv
-          command: |
-            curl https://pyenv.run | bash
-            python -m pip install tox tox-pyenv --user
-            pyenv local 3.6.8 3.7.3
       - run:
           name: Install
           command: |
             python -m pip install flit --user
             python -m flit install --deps=develop
+
+jobs:
+  "python-3.6":
+    <<: *shared
+    docker:
+      - image: circleci/python:3.6
+
+    steps:
       - run:
           name: Test
           command: |
-            python -m tox
+            python -m tox -e py36
+
+
+  "python-3.7":
+    <<: *shared
+    docker:
+      - image: circleci/python:3.7
+
+    steps:
+      - run:
+          name: Test
+          command: |
+            python -m tox -e py37 black mypy
 
 
 workflows:
@@ -29,4 +40,5 @@ workflows:
 
   development-workflow:
     jobs:
-      - development
+      - "python3.6"
+      - "python3.7"
