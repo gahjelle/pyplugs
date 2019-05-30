@@ -15,17 +15,17 @@ shared: &shared
             python -m tox --recreate
 
 jobs:
-  "py-36":
+  "test-py36":
     <<: *shared
     docker:
       - image: circleci/python:3.6
 
-  "py-37":
+  "test-py37":
     <<: *shared
     docker:
       - image: circleci/python:3.7
 
-  "py-38":
+  "test-py38":
     <<: *shared
     docker:
       - image: circleci/python:3.8
