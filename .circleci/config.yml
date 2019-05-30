@@ -28,7 +28,7 @@ jobs:
   "test-py38":
     <<: *shared
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/python:3.8-rc
 
 
 workflows:
