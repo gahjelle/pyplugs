@@ -1,14 +1,14 @@
 version: 2
 
 jobs:
-  development:
-    docker:
-      - image: circleci/python:3.7
-
   dependencies:
     override:
       - pip install tox tox-pyenv
       - pyenv local 3.6.8 3.7.3
+
+  development:
+    docker:
+      - image: circleci/python:3.7
 
     steps:
       - checkout
