@@ -167,7 +167,7 @@ def _import_all(package: str) -> None:
     # Loop through all files in the directories of the package
     pkg_paths = [pathlib.Path(p) for p in pkg.__path__]  # type: ignore
     for pkg_path in pkg_paths:
-        for path in pkg_path.iterdir():
+        for path in pkg_path.glob("*.py"):
             plugin = path.stem
             if not plugin.startswith("_"):
                 _import(package, plugin)
