@@ -19,7 +19,7 @@ from pyplugs._exceptions import *  # noqa
 # Version of PyPlugs.
 #
 # This is automatically set using the bumpversion tool
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 
 # Homepage for PyPlugs
