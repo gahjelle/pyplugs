@@ -5,12 +5,17 @@
 # Standard library imports
 import functools
 import importlib
-import pathlib
 import sys
 import textwrap
 from typing import Any, Callable, Dict, List, Optional
 from typing import NamedTuple
 from typing import overload, TypeVar
+
+# Use backport of importlib.resources if necessary
+try:
+    from importlib import resources
+except ImportError:  # pragma: nocover
+    import importlib_resources as resources  # type: ignore
 
 # Pyplugs imports
 from pyplugs import _exceptions
@@ -157,20 +162,19 @@ def _import(package: str, plugin: str) -> None:
 def _import_all(package: str) -> None:
     """Import all plugins in a package"""
     try:
-        pkg = importlib.import_module(package)
+        all_resources = resources.contents(package)  # type: ignore
     except ImportError as err:
         raise _exceptions.UnknownPackageError(err) from None
 
     # Note that we have tried to import the package by adding it to _PLUGINS
     _PLUGINS.setdefault(package, dict())
 
-    # Loop through all files in the directories of the package
-    pkg_paths = [pathlib.Path(p) for p in pkg.__path__]  # type: ignore
-    for pkg_path in pkg_paths:
-        for path in pkg_path.glob("*.py"):
-            plugin = path.stem
-            if not plugin.startswith("_"):
-                _import(package, plugin)
+    # Loop through all Python files in the directories of the package
+    plugins = [
+        r[:-3] for r in all_resources if r.endswith(".py") and not r.startswith("_")
+    ]
+    for plugin in plugins:
+        _import(package, plugin)
 
 
 @expose

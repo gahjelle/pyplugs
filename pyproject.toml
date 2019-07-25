@@ -25,7 +25,9 @@ keywords           = "plugin decorator"
 
 # Requirements
 requires-python    = ">=3.6"
-requires           = []
+requires           = [
+    "importlib_resources; python_version < '3.7'"
+]
 
 
 [tool.flit.metadata.requires-extra]
