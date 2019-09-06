@@ -9,12 +9,11 @@ Current maintainers:
 """
 
 # Standard library imports
-from datetime import date as _date
 from collections import namedtuple as _namedtuple
+from datetime import date as _date
 
-# Include PyPlugs functions at top level
-from pyplugs._plugins import *  # noqa
 from pyplugs._exceptions import *  # noqa
+from pyplugs._plugins import *  # noqa
 
 # Version of PyPlugs.
 #

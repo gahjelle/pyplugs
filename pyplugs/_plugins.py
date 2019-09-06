@@ -7,18 +7,16 @@ import functools
 import importlib
 import sys
 import textwrap
-from typing import Any, Callable, Dict, List, Optional
-from typing import NamedTuple
-from typing import overload, TypeVar
+from typing import Any, Callable, Dict, List, NamedTuple, Optional, TypeVar, overload
+
+# Pyplugs imports
+from pyplugs import _exceptions
 
 # Use backport of importlib.resources if necessary
 try:
     from importlib import resources
 except ImportError:  # pragma: nocover
     import importlib_resources as resources  # type: ignore
-
-# Pyplugs imports
-from pyplugs import _exceptions
 
 
 # Type aliases
