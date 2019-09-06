@@ -31,6 +31,6 @@ requires           = [
 
 
 [tool.flit.metadata.requires-extra]
-dev                = ["black", "bumpversion", "flake8", "flit", "mypy"]
+dev                = ["black", "bumpversion", "flake8", "flit", "isort", "mypy"]
 doc                = ["mkdocs"]
 test               = ["pytest", "pytest-cov", "tox"]
