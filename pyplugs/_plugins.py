@@ -48,7 +48,7 @@ class PluginInfo(NamedTuple):
 
 
 # Dictionary with information about all registered plug-ins
-_PLUGINS: Dict[str, Dict[str, Dict[str, PluginInfo]]] = dict()
+_PLUGINS: Dict[str, Dict[str, Dict[str, PluginInfo]]] = {}
 
 
 @overload
@@ -75,8 +75,8 @@ def register(
         func_name = func.__name__
         module_doc = sys.modules[func.__module__].__doc__ or ""
 
-        pkg_info = _PLUGINS.setdefault(package_name, dict())
-        plugin_info = pkg_info.setdefault(plugin_name, dict())
+        pkg_info = _PLUGINS.setdefault(package_name, {})
+        plugin_info = pkg_info.setdefault(plugin_name, {})
         plugin_info[func_name] = PluginInfo(
             package_name=package_name,
             plugin_name=plugin_name,
@@ -165,7 +165,7 @@ def _import_all(package: str) -> None:
         raise _exceptions.UnknownPackageError(err) from None
 
     # Note that we have tried to import the package by adding it to _PLUGINS
-    _PLUGINS.setdefault(package, dict())
+    _PLUGINS.setdefault(package, {})
 
     # Loop through all Python files in the directories of the package
     plugins = [
