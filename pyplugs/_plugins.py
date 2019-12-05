@@ -134,6 +134,20 @@ def info(package: str, plugin: str, func: Optional[str] = None) -> PluginInfo:
 
 
 @expose
+def exists(package: str, plugin: str) -> bool:
+    """Check if a given plugin exists"""
+    if package in _PLUGINS and plugin in _PLUGINS[package]:
+        return True
+
+    try:
+        _import(package, plugin)
+    except _exceptions.UnknownPluginError:
+        return False
+    else:
+        return package in _PLUGINS and plugin in _PLUGINS[package]
+
+
+@expose
 def get(package: str, plugin: str, func: Optional[str] = None) -> Plugin:
     """Get a given plugin"""
     return info(package, plugin, func).func
@@ -154,7 +168,11 @@ def _import(package: str, plugin: str) -> None:
     try:
         importlib.import_module(plugin_module)
     except ImportError as err:
-        raise _exceptions.UnknownPluginError(err) from None
+        if repr(plugin_module) in err.msg:  # type: ignore
+            raise _exceptions.UnknownPluginError(
+                f"Plugin {plugin!r} not found in {package!r}"
+            ) from None
+        raise
 
 
 def _import_all(package: str) -> None:
@@ -172,7 +190,10 @@ def _import_all(package: str) -> None:
         r[:-3] for r in all_resources if r.endswith(".py") and not r.startswith("_")
     ]
     for plugin in plugins:
-        _import(package, plugin)
+        try:
+            _import(package, plugin)
+        except ImportError:
+            pass  # Don't let errors in one plugin, affect the others
 
 
 @expose
@@ -191,6 +212,12 @@ def funcs_factory(package: str) -> Callable[[str], List[str]]:
 def info_factory(package: str) -> Callable[[str, Optional[str]], PluginInfo]:
     """Create a info() function for one package"""
     return functools.partial(info, package)
+
+
+@expose
+def exists_factory(package: str) -> Callable[[str], bool]:
+    """Create an exists() function for one package"""
+    return functools.partial(exists, package)
 
 
 @expose
