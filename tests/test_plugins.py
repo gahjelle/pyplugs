@@ -74,6 +74,13 @@ def test_plugin_not_exists(plugin_package, plugin_name):
         pyplugs.info(plugin_package, plugin_name)
 
 
+def test_exists(plugin_package):
+    """Test that exists() function correctly identifies existing plugins"""
+    assert pyplugs.exists(plugin_package, "plugin_parts") is True
+    assert pyplugs.exists(plugin_package, "no_plugins") is False
+    assert pyplugs.exists(plugin_package, "non_existent") is False
+
+
 def test_call_existing_plugin(plugin_package):
     """Test that calling a test-plugin works, and returns a string"""
     plugin_name = pyplugs.names(plugin_package)[0]
@@ -148,6 +155,14 @@ def test_info_factory(plugin_package):
     factory_info = info(plugin_name)
     pyplugs_info = pyplugs.info(plugin_package, plugin=plugin_name)
     assert factory_info == pyplugs_info
+
+
+def test_exists_factory(plugin_package):
+    """Test that the exists factory can check for plugins in a package"""
+    exists = pyplugs.exists_factory(plugin_package)
+    assert exists("plugin_parts") is True
+    assert exists("no_plugins") is False
+    assert exists("non_existent") is False
 
 
 def test_get_factory(plugin_package):
