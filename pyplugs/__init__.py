@@ -18,7 +18,7 @@ from pyplugs._plugins import *  # noqa
 # Version of PyPlugs.
 #
 # This is automatically set using the bumpversion tool
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 
 # Homepage for PyPlugs
