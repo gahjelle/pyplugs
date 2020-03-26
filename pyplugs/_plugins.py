@@ -52,7 +52,7 @@ _PLUGINS: Dict[str, Dict[str, Dict[str, PluginInfo]]] = {}
 
 
 @overload
-def register(func: None, *, sort_value: int) -> Callable[[Plugin], Plugin]:
+def register(func: None, *, sort_value: float) -> Callable[[Plugin], Plugin]:
     """Signature for using decorator with parameters"""
     ...  # pragma: nocover
 
