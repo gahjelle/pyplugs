@@ -30,8 +30,28 @@ jobs:
     docker:
       - image: circleci/python:3.8
 
-  "test-py39":
+  "test-py39a":
     <<: *shared
+    environment:
+      TOX_SKIP_ENV: mypy
+    docker:
+      - image: circleci/python:3.9-rc
+
+  "test-py39b":
+    working_directory: ~/circleci-pyplugs
+    steps:
+      - checkout
+      - run:
+          name: Install
+          command: |
+            python -m pip install flit --user
+            python -m flit install --deps=develop
+      - run:
+          name: Test
+          environment:
+            TOX_SKIP_ENV: mypy
+          command: |
+            python -m tox --recreate
     docker:
       - image: circleci/python:3.9-rc
 
@@ -43,4 +63,5 @@ workflows:
       - "test-py36"
       - "test-py37"
       - "test-py38"
-      - "test-py39"
+      - "test-py39a"
+      - "test-py39b"
