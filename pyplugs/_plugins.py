@@ -164,6 +164,9 @@ def call(
 
 def _import(package: str, plugin: str) -> None:
     """Import the given plugin file from a package"""
+    if package in _PLUGINS and plugin in _PLUGINS[package]:
+        return
+
     plugin_module = f"{package}.{plugin}"
     try:
         importlib.import_module(plugin_module)
