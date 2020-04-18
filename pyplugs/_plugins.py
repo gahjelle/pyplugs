@@ -141,7 +141,7 @@ def exists(package: str, plugin: str) -> bool:
 
     try:
         _import(package, plugin)
-    except _exceptions.UnknownPluginError:
+    except (_exceptions.UnknownPluginError, _exceptions.UnknownPackageError):
         return False
     else:
         return package in _PLUGINS and plugin in _PLUGINS[package]
@@ -174,6 +174,10 @@ def _import(package: str, plugin: str) -> None:
         if repr(plugin_module) in err.msg:  # type: ignore
             raise _exceptions.UnknownPluginError(
                 f"Plugin {plugin!r} not found in {package!r}"
+            ) from None
+        elif repr(package) in err.msg:  # type: ignore
+            raise _exceptions.UnknownPackageError(
+                f"Package {package!r} does not exist"
             ) from None
         raise
 
