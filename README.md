@@ -6,6 +6,7 @@ _Decorator based plug-in architecture for Python_
 [![Python versions](https://img.shields.io/pypi/pyversions/pyplugs.svg)](https://pypi.org/project/pyplugs/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
+[![Interrogate DocStrings](https://github.com/gahjelle/pyplugs/blob/master/docs/images/interrogate_badge.svg)](https://interrogate.readthedocs.io/)
 [![CircleCI](https://circleci.com/gh/gahjelle/pyplugs.svg?style=shield)](https://circleci.com/gh/gahjelle/pyplugs)
 
 

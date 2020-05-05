@@ -70,6 +70,7 @@ def register(
     """Decorator for registering a new plug-in"""
 
     def decorator_register(func: Callable[..., T]) -> Callable[..., T]:
+        """Store information about the given function"""
         package_name, _, plugin_name = func.__module__.rpartition(".")
         description, _, doc = (func.__doc__ or "").partition("\n\n")
         func_name = func.__name__
