@@ -2,7 +2,6 @@
 requires = ["flit_core >=2,<4"]
 build-backend = "flit_core.buildapi"
 
-
 [tool.flit.metadata]
 module             = "pyplugs"
 author             = "Geir Arne Hjelle"
@@ -33,6 +32,17 @@ requires           = [
 
 
 [tool.flit.metadata.requires-extra]
-dev                = ["black", "bumpversion", "flake8", "flit", "isort", "mypy", "pre-commit"]
+dev                = ["black", "bumpversion", "flake8", "flit", "interrogate", "isort", "mypy", "pre-commit"]
 doc                = ["mkdocs"]
-test               = ["black", "flake8", "isort", "mypy", "pytest", "pytest-cov", "tox"]
+test               = ["black", "flake8", "interrogate", "isort", "mypy", "pytest", "pytest-cov", "tox"]
+
+
+[tool.interrogate]
+ignore-init-method = false
+ignore-init-module = false
+ignore-magic = false
+ignore-semiprivate = false
+ignore-private = false
+ignore-module = false
+fail-under = 100
+verbose = 0
