@@ -1,6 +1,9 @@
 """Example of a plug-in that will crash because of an import error"""
 
+# Third party imports
 import non_existent_package  # noqa
+
+# PyPlugs imports
 import pyplugs
 
 

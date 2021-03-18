@@ -1,4 +1,5 @@
 """Example of a plug-in consisting of several parts"""
+# PyPlugs imports
 import pyplugs
 
 

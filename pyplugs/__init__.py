@@ -12,6 +12,7 @@ Current maintainers:
 from collections import namedtuple as _namedtuple
 from datetime import date as _date
 
+# PyPlugs imports
 from pyplugs._exceptions import *  # noqa
 from pyplugs._plugins import *  # noqa
 
@@ -25,7 +26,7 @@ __version__ = "0.3.2"
 __url__ = "https://pyplugs.readthedocs.io/"
 
 
-# Authors/maintainers of Pyplugs
+# Authors/maintainers of PyPlugs
 _Author = _namedtuple("_Author", ["name", "email", "start", "end"])
 _AUTHORS = [
     _Author("Geir Arne Hjelle", "geirarne@gmail.com", _date(2019, 4, 1), _date.max)
