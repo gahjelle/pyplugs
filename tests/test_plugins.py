@@ -51,6 +51,30 @@ def test_list_funcs(plugin_package):
     assert len(plugins) == 3
 
 
+def test_list_funcs_without_label(plugin_package):
+    """Test that funcs() finds all plugins without a label"""
+    plugins = pyplugs.funcs(plugin_package, "plugin_labels")
+    assert len(plugins) == 2
+
+
+def test_list_funcs_with_label(plugin_package):
+    """Test that funcs() can filter plugins with a label"""
+    plugins = pyplugs.funcs(plugin_package, "plugin_labels", label="label")
+    assert len(plugins) == 2
+
+
+def test_list_labels(plugin_package):
+    """Test that labels() can list all labels in a package"""
+    labels = pyplugs.labels(plugin_package, "plugin_labels")
+    assert labels == {"label", "another_label"}
+
+
+def test_list_labels_empty(plugin_package):
+    """Test that labels() correctly list no labels for unlabeled plugins"""
+    labels = pyplugs.labels(plugin_package, "plugin_parts")
+    assert labels == set()
+
+
 def test_package_non_existing():
     """Test that a non-existent package raises an appropriate error"""
     with pytest.raises(pyplugs.UnknownPackageError):
@@ -152,6 +176,15 @@ def test_funcs_factory(plugin_package):
     factory_funcs = funcs(plugin_name)
     pyplugs_funcs = pyplugs.funcs(plugin_package, plugin_name)
     assert factory_funcs == pyplugs_funcs
+
+
+def test_labels_factory(plugin_package):
+    """Test that the labels factory can retrieve labels within plugin"""
+    plugin_name = "plugin_labels"
+    labels = pyplugs.labels_factory(plugin_package)
+    factory_labels = labels(plugin_name)
+    pyplugs_labels = pyplugs.labels(plugin_package, plugin_name)
+    assert factory_labels == pyplugs_labels
 
 
 def test_info_factory(plugin_package):
