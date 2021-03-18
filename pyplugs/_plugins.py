@@ -46,6 +46,7 @@ def expose(func: Callable[..., T]) -> Callable[..., T]:
     return func
 
 
+@expose
 class PluginInfo(NamedTuple):
     """Information about one plug-in"""
 
@@ -139,7 +140,9 @@ def labels(package: str, plugin: str) -> Set[str]:
 
 
 @expose
-def info(package: str, plugin: str, func: Optional[str] = None) -> PluginInfo:
+def info(
+    package: str, plugin: str, func: Optional[str] = None, label: Optional[str] = None
+) -> PluginInfo:
     """Get information about a plug-in"""
     _import(package, plugin)
 
@@ -148,17 +151,27 @@ def info(package: str, plugin: str, func: Optional[str] = None) -> PluginInfo:
     except KeyError:
         raise _exceptions.UnknownPluginError(
             f"Could not find any plug-in named {plugin!r} inside {package!r}. "
-            "Use pyplugs.register to register functions as plug-ins"
+            "Use @pyplugs.register to register functions as plug-ins"
         )
 
-    func = next(iter(plugin_info.keys())) if func is None else func
+    if func is None:
+        func = next(iter(funcs(package, plugin, label=label) + [""]))
+
     try:
-        return plugin_info[func]
+        func_info = plugin_info[func]
     except KeyError:
         raise _exceptions.UnknownPluginFunctionError(
             f"Could not find any function named {func!r} inside '{package}.{plugin}'. "
-            "Use pyplugs.register to register plug-in functions"
+            "Use @pyplugs.register to register plug-in functions"
         )
+
+    if func_info.label != label:
+        raise _exceptions.UnknownPluginFunctionError(
+            f"Could not find '{package}.{plugin}.{func}' with label '{label}'. "
+            "Use @pyplugs.register to register plug-in functions"
+        )
+
+    return func_info
 
 
 @expose
@@ -176,17 +189,24 @@ def exists(package: str, plugin: str) -> bool:
 
 
 @expose
-def get(package: str, plugin: str, func: Optional[str] = None) -> Plugin:
+def get(
+    package: str, plugin: str, func: Optional[str] = None, label: Optional[str] = None
+) -> Plugin:
     """Get a given plugin"""
-    return info(package, plugin, func).func
+    return info(package, plugin, func=func, label=label).func
 
 
 @expose
 def call(
-    package: str, plugin: str, func: Optional[str] = None, *args: Any, **kwargs: Any
+    package: str,
+    plugin: str,
+    func: Optional[str] = None,
+    label: Optional[str] = None,
+    *args: Any,
+    **kwargs: Any,
 ) -> Any:
     """Call the given plugin"""
-    plugin_func = get(package, plugin, func)
+    plugin_func = get(package, plugin, func=func, label=label)
     return plugin_func(*args, **kwargs)
 
 

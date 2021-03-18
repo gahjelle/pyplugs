@@ -98,6 +98,38 @@ def test_plugin_not_exists(plugin_package, plugin_name):
         pyplugs.info(plugin_package, plugin_name)
 
 
+def test_info(plugin_package):
+    """Test that the info gives information about a plugin"""
+    plugin_info = pyplugs.info(plugin_package, "plugin_plain")
+    assert isinstance(plugin_info, pyplugs.PluginInfo)
+    assert plugin_info.func() == "plain"
+
+
+def test_info_with_label(plugin_package):
+    """Test that the info gives information about a labeled plugin"""
+    plugin_info = pyplugs.info(plugin_package, "plugin_labels", label="label")
+    assert isinstance(plugin_info, pyplugs.PluginInfo)
+    assert plugin_info.func_name == "plugin_first_label"
+
+
+def test_info_with_wrong_label(plugin_package):
+    """Test that info() raises error when label is wrong"""
+    with pytest.raises(pyplugs.UnknownPluginFunctionError):
+        pyplugs.info(plugin_package, "plugin_labels", label="wrong_label")
+
+
+def test_info_with_function_with_wrong_label(plugin_package):
+    """Test that info() is strict about matching label to function"""
+    with pytest.raises(pyplugs.UnknownPluginFunctionError):
+        pyplugs.info(plugin_package, "plugin_labels", func="plugin_one", label="label")
+
+
+def test_info_with_no_plugins(plugin_package):
+    """Test that info() raises a proper error when there are no plugins available"""
+    with pytest.raises(pyplugs.UnknownPluginError):
+        pyplugs.info(plugin_package, "no_plugins")
+
+
 def test_exists(plugin_package):
     """Test that exists() function correctly identifies existing plugins"""
     assert pyplugs.exists(plugin_package, "plugin_parts") is True
@@ -122,6 +154,11 @@ def test_call_non_existing_plugin():
     """Test that calling a non-existing plugin raises an error"""
     with pytest.raises(pyplugs.UnknownPluginError):
         pyplugs.call("pyplugs", "non_existent")
+
+
+def test_call_with_label(plugin_package):
+    """Test that labels are accounted for when calling plugins"""
+    assert pyplugs.call(plugin_package, "plugin_labels", label="label") == "first"
 
 
 def test_ordered_plugin(plugin_package):
