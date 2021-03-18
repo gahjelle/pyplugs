@@ -7,7 +7,17 @@ import functools
 import importlib
 import sys
 import textwrap
-from typing import Any, Callable, Dict, List, NamedTuple, Optional, TypeVar, overload
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Set,
+    TypeVar,
+    overload,
+)
 
 # PyPlugs imports
 from pyplugs import _exceptions
@@ -36,6 +46,7 @@ def expose(func: Callable[..., T]) -> Callable[..., T]:
     return func
 
 
+@expose
 class PluginInfo(NamedTuple):
     """Information about one plug-in"""
 
@@ -47,6 +58,7 @@ class PluginInfo(NamedTuple):
     doc: str
     module_doc: str
     sort_value: float
+    label: Optional[str]
 
 
 # Dictionary with information about all registered plug-ins
@@ -54,7 +66,9 @@ _PLUGINS: Dict[str, Dict[str, Dict[str, PluginInfo]]] = {}
 
 
 @overload
-def register(func: None, *, sort_value: float) -> Callable[[Plugin], Plugin]:
+def register(
+    func: None, *, sort_value: float, label: Optional[str]
+) -> Callable[[Plugin], Plugin]:
     """Signature for using decorator with parameters"""
     ...  # pragma: nocover
 
@@ -67,7 +81,10 @@ def register(func: Plugin) -> Plugin:
 
 @expose
 def register(
-    _func: Optional[Plugin] = None, *, sort_value: float = 0
+    _func: Optional[Plugin] = None,
+    *,
+    sort_value: float = 0,
+    label: Optional[str] = None,
 ) -> Callable[..., Any]:
     """Decorator for registering a new plug-in"""
 
@@ -89,6 +106,7 @@ def register(
             doc=textwrap.dedent(doc).strip(),
             module_doc=module_doc,
             sort_value=sort_value,
+            label=label,
         )
         return func
 
@@ -106,15 +124,25 @@ def names(package: str) -> List[str]:
 
 
 @expose
-def funcs(package: str, plugin: str) -> List[str]:
+def funcs(package: str, plugin: str, label: Optional[str] = None) -> List[str]:
     """List all functions in one plug-in"""
     _import(package, plugin)
     plugin_info = _PLUGINS[package][plugin]
-    return list(plugin_info.keys())
+    return [k for k, v in plugin_info.items() if v.label == label]
 
 
 @expose
-def info(package: str, plugin: str, func: Optional[str] = None) -> PluginInfo:
+def labels(package: str, plugin: str) -> Set[str]:
+    """List all labels in one plug-in"""
+    _import(package, plugin)
+    plugin_info = _PLUGINS[package][plugin]
+    return {p.label for p in plugin_info.values() if p.label is not None}
+
+
+@expose
+def info(
+    package: str, plugin: str, func: Optional[str] = None, label: Optional[str] = None
+) -> PluginInfo:
     """Get information about a plug-in"""
     _import(package, plugin)
 
@@ -123,17 +151,27 @@ def info(package: str, plugin: str, func: Optional[str] = None) -> PluginInfo:
     except KeyError:
         raise _exceptions.UnknownPluginError(
             f"Could not find any plug-in named {plugin!r} inside {package!r}. "
-            "Use pyplugs.register to register functions as plug-ins"
+            "Use @pyplugs.register to register functions as plug-ins"
         )
 
-    func = next(iter(plugin_info.keys())) if func is None else func
+    if func is None:
+        func = next(iter(funcs(package, plugin, label=label) + [""]))
+
     try:
-        return plugin_info[func]
+        func_info = plugin_info[func]
     except KeyError:
         raise _exceptions.UnknownPluginFunctionError(
             f"Could not find any function named {func!r} inside '{package}.{plugin}'. "
-            "Use pyplugs.register to register plug-in functions"
+            "Use @pyplugs.register to register plug-in functions"
         )
+
+    if func_info.label != label:
+        raise _exceptions.UnknownPluginFunctionError(
+            f"Could not find '{package}.{plugin}.{func}' with label '{label}'. "
+            "Use @pyplugs.register to register plug-in functions"
+        )
+
+    return func_info
 
 
 @expose
@@ -151,17 +189,24 @@ def exists(package: str, plugin: str) -> bool:
 
 
 @expose
-def get(package: str, plugin: str, func: Optional[str] = None) -> Plugin:
+def get(
+    package: str, plugin: str, func: Optional[str] = None, label: Optional[str] = None
+) -> Plugin:
     """Get a given plugin"""
-    return info(package, plugin, func).func
+    return info(package, plugin, func=func, label=label).func
 
 
 @expose
 def call(
-    package: str, plugin: str, func: Optional[str] = None, *args: Any, **kwargs: Any
+    package: str,
+    plugin: str,
+    func: Optional[str] = None,
+    label: Optional[str] = None,
+    *args: Any,
+    **kwargs: Any,
 ) -> Any:
     """Call the given plugin"""
-    plugin_func = get(package, plugin, func)
+    plugin_func = get(package, plugin, func=func, label=label)
     return plugin_func(*args, **kwargs)
 
 
@@ -216,6 +261,12 @@ def names_factory(package: str) -> Callable[[], List[str]]:
 def funcs_factory(package: str) -> Callable[[str], List[str]]:
     """Create a funcs() function for one package"""
     return functools.partial(funcs, package)
+
+
+@expose
+def labels_factory(package: str) -> Callable[[str], Set[str]]:
+    """Create a labels() function for one package"""
+    return functools.partial(labels, package)
 
 
 @expose
