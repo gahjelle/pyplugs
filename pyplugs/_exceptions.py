@@ -1,20 +1,20 @@
-"""Exceptions for the Pyplugs package
+"""Exceptions for the PyPlugs package
 
-Custom exceptions used by Pyplugs for more helpful error messages
+Custom exceptions used by PyPlugs for more helpful error messages
 """
 
 
-class PyplugsException(Exception):
-    """Base class for all Pyplugs exceptions"""
+class PyPlugsException(Exception):
+    """Base class for all PyPlugs exceptions"""
 
 
-class UnknownPackageError(PyplugsException):
-    """Pyplugs could not import the given package"""
+class UnknownPackageError(PyPlugsException):
+    """PyPlugs could not import the given package"""
 
 
-class UnknownPluginError(PyplugsException):
-    """Pyplugs could not locate the given plugin"""
+class UnknownPluginError(PyPlugsException):
+    """PyPlugs could not locate the given plugin"""
 
 
-class UnknownPluginFunctionError(PyplugsException):
-    """Pyplugs could not locate the given function within a plugin"""
+class UnknownPluginFunctionError(PyPlugsException):
+    """PyPlugs could not locate the given function within a plugin"""

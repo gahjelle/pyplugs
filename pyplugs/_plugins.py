@@ -9,13 +9,15 @@ import sys
 import textwrap
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, TypeVar, overload
 
-# Pyplugs imports
+# PyPlugs imports
 from pyplugs import _exceptions
 
 # Use backport of importlib.resources if necessary
 try:
+    # Standard library imports
     from importlib import resources
 except ImportError:  # pragma: nocover
+    # Third party imports
     import importlib_resources as resources  # type: ignore
 
 

@@ -1,4 +1,4 @@
-"""Tests for Pyplugs
+"""Tests for PyPlugs
 
 Based on the Pytest test runner
 """
@@ -8,7 +8,7 @@ import pathlib
 # Third party imports
 import pytest
 
-# Pyplugs imports
+# PyPlugs imports
 import pyplugs
 
 
