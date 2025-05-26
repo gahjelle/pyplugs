@@ -1,5 +1,7 @@
 """Decorators for registering plugins"""
 
+import contextlib
+
 # Standard library imports
 import functools
 import importlib
@@ -209,7 +211,7 @@ def _import(package: str, plugin: str) -> None:
             raise _exceptions.UnknownPackageError(
                 f"Package {package!r} does not exist"
             ) from None
-        raise
+        raise  # pragma: nocover
 
 
 def _import_all(package: str) -> None:
@@ -227,10 +229,9 @@ def _import_all(package: str) -> None:
         r[:-3] for r in all_resources if r.endswith(".py") and not r.startswith("_")
     ]
     for plugin in plugins:
-        try:
+        with contextlib.suppress(ImportError):
+            # Don't let errors in one plugin, affect the others
             _import(package, plugin)
-        except ImportError:
-            pass  # Don't let errors in one plugin, affect the others
 
 
 @expose
