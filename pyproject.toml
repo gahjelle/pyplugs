@@ -70,5 +70,5 @@ tag             = true
 push            = false
 
 [tool.bumpver.file_patterns]
-"pyproject.toml"      = ['current_version  = "{version}"']
-"pyplugs/__init__.py" = ['__version__ = "MAJOR.MINOR.PATCH"']
+"pyproject.toml"          = ['current_version = "{version}"']
+"src/pyplugs/__init__.py" = ['__version__ = "MAJOR.MINOR.PATCH"']
