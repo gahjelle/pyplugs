@@ -213,7 +213,7 @@ def _import(package: str, plugin: str) -> None:
 def _import_all(package: str) -> None:
     """Import all plugins in a package"""
     try:
-        all_resources = resources.contents(package)
+        all_resources = [path.name for path in resources.files(package).iterdir()]
     except ImportError as err:
         raise _exceptions.UnknownPackageError(err) from None
 
@@ -269,5 +269,6 @@ def get_factory(package: str) -> Callable[[str, Optional[str]], Callable[..., An
 @expose
 def call_factory(package: str) -> Callable[..., Any]:
     """Create a call() function for one package"""
+    return functools.partial(call, package)
     return functools.partial(call, package)
     return functools.partial(call, package)
