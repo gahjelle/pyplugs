@@ -1,20 +1,20 @@
 [build-system]
-requires      = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
+requires      = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyplugs"
 authors = [{ name = "Geir Arne Hjelle", email = "geirarne@gmail.com" }]
+description = "PyPlugs, decorator based plug-in architecture for Python"
 readme = "README.md"
-dynamic = ["version", "description"]
+license = "MIT"
+license-files = ["LICENSE"]
+dynamic = ["version"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
-    "Operating System :: MacOS",
-    "Operating System :: Microsoft",
-    "Operating System :: POSIX :: Linux",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -29,10 +29,13 @@ dependencies = []
 [project.urls]
 Home = "https://github.com/gahjelle/pyplugs"
 
-[project.optional-dependencies]
-dev  = ["bumpver", "ruff", "flit", "interrogate", "mypy", "pre-commit"]
-doc  = ["mkdocs"]
-test = ["ruff", "interrogate", "mypy", "pytest", "pytest-cov", "tox"]
+[dependency-groups]
+build = ["build", "twine"]
+dev   = ["bumpver", "ruff", "interrogate", "mypy"]
+test  = ["pytest", "pytest-cov"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pyplugs.__version__" }
 
 
 [tool.interrogate]
@@ -58,17 +61,15 @@ python_version = "3.9"
 strict         = true
 
 [tool.bumpver]
-current_version  = "0.4.0"
-version_pattern  = "MAJOR.MINOR.PATCH"
-commit_message   = "bump version {old_version} -> {new_version}"
-tag_message      = "{new_version}"
-tag_scope        = "default"
-pre_commit_hook  = ""
-post_commit_hook = ""
-commit           = true
-tag              = true
-push             = false
+current_version = "v0.4.0"
+version_pattern = "vMAJOR.MINOR.PATCH"
+commit_message  = "bump version {old_version} -> {new_version}"
+tag_message     = "{new_version}"
+tag_scope       = "default"
+commit          = true
+tag             = true
+push            = false
 
 [tool.bumpver.file_patterns]
 "pyproject.toml"      = ['current_version  = "{version}"']
-"pyplugs/__init__.py" = ['__version__ = "{version}']
+"pyplugs/__init__.py" = ['__version__ = "MAJOR.MINOR.PATCH"']
