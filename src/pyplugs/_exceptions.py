@@ -3,6 +3,13 @@
 Custom exceptions used by PyPlugs for more helpful error messages
 """
 
+__all__ = [
+    "PyPlugsException",
+    "UnknownPackageError",
+    "UnknownPluginError",
+    "UnknownPluginFunctionError",
+]
+
 
 class PyPlugsException(Exception):
     """Base class for all PyPlugs exceptions"""
