@@ -64,7 +64,7 @@ __all__ = [
 # Version of PyPlugs.
 #
 # This is automatically set using the bumpver tool
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 
 # Homepage for PyPlugs
