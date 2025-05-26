@@ -1,48 +1,74 @@
 [build-system]
-requires = ["flit_core >=2,<4"]
+requires      = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
-[tool.flit.metadata]
-module             = "pyplugs"
-author             = "Geir Arne Hjelle"
-author-email       = "geirarne@gmail.com"
-home-page          = "https://github.com/gahjelle/pyplugs"
-description-file   = "README.md"
-classifiers        = [
-    "Development Status :: 2 - Pre-Alpha",
+[project]
+name = "pyplugs"
+authors = [{ name = "Geir Arne Hjelle", email = "geirarne@gmail.com" }]
+readme = "README.md"
+dynamic = ["version", "description"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: MacOS",
     "Operating System :: Microsoft",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-keywords           = "plugin decorator"
+keywords = ["plugin", "decorator"]
+requires-python = ">=3.9"
+dependencies = []
 
-# Requirements
-requires-python    = ">=3.6"
-requires           = [
-    "importlib_resources; python_version < '3.7'"
-]
+[project.urls]
+Home = "https://github.com/gahjelle/pyplugs"
 
-
-[tool.flit.metadata.requires-extra]
-dev                = ["black", "bumpversion", "flake8", "flit", "interrogate", "isort", "mypy", "pre-commit"]
-doc                = ["mkdocs"]
-test               = ["black", "flake8", "interrogate", "isort", "mypy", "pytest", "pytest-cov", "tox"]
+[project.optional-dependencies]
+dev  = ["bumpver", "ruff", "flit", "interrogate", "mypy", "pre-commit"]
+doc  = ["mkdocs"]
+test = ["ruff", "interrogate", "mypy", "pytest", "pytest-cov", "tox"]
 
 
 [tool.interrogate]
 ignore-init-method = false
 ignore-init-module = false
-ignore-magic = false
+ignore-magic       = false
 ignore-semiprivate = false
-ignore-private = false
-ignore-module = false
-fail-under = 100
-verbose = 0
+ignore-private     = false
+ignore-module      = false
+fail-under         = 100
+verbose            = 0
+
+[tool.ruff]
+target-version = "py39"
+exclude        = [".git", "venv", "migrations", "node_modules"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "RUF100"]
+ignore = []
+
+[tool.mypy]
+python_version = "3.9"
+strict         = true
+
+[tool.bumpver]
+current_version  = "0.4.0"
+version_pattern  = "MAJOR.MINOR.PATCH"
+commit_message   = "bump version {old_version} -> {new_version}"
+tag_message      = "{new_version}"
+tag_scope        = "default"
+pre_commit_hook  = ""
+post_commit_hook = ""
+commit           = true
+tag              = true
+push             = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml"      = ['current_version  = "{version}"']
+"pyplugs/__init__.py" = ['__version__ = "{version}']

@@ -1,12 +1,11 @@
-"""Module doc-string
-"""
+"""Module doc-string"""
 
 # PyPlugs imports
 import pyplugs
 
 
 @pyplugs.register
-def plugin_plain():
+def plugin_plain() -> str:
     """A plain plugin
 
     This is the plain docstring.

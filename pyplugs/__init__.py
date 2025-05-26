@@ -13,12 +13,57 @@ from collections import namedtuple as _namedtuple
 from datetime import date as _date
 
 # PyPlugs imports
-from pyplugs._exceptions import *  # noqa
-from pyplugs._plugins import *  # noqa
+from pyplugs._exceptions import (
+    PyPlugsException,
+    UnknownPackageError,
+    UnknownPluginError,
+    UnknownPluginFunctionError,
+)
+from pyplugs._plugins import (
+    PluginInfo,
+    call,
+    call_factory,
+    exists,
+    exists_factory,
+    funcs,
+    funcs_factory,
+    get,
+    get_factory,
+    info,
+    info_factory,
+    labels,
+    labels_factory,
+    names,
+    names_factory,
+    register,
+)
+
+__all__ = [
+    "PyPlugsException",
+    "UnknownPackageError",
+    "UnknownPluginError",
+    "UnknownPluginFunctionError",
+    "PluginInfo",
+    "call",
+    "call_factory",
+    "exists",
+    "exists_factory",
+    "funcs",
+    "funcs_factory",
+    "get",
+    "get_factory",
+    "info",
+    "info_factory",
+    "labels",
+    "labels_factory",
+    "names",
+    "names_factory",
+    "register",
+]
 
 # Version of PyPlugs.
 #
-# This is automatically set using the bumpversion tool
+# This is automatically set using the bumpver tool
 __version__ = "0.4.0"
 
 
@@ -56,4 +101,4 @@ def _update_doc(doc: str) -> str:
     return doc.format(maintainers=maintainers, url=__url__)
 
 
-__doc__ = _update_doc(__doc__)
+__doc__ = _update_doc(__doc__ if __doc__ is not None else "")

@@ -1,89 +1,71 @@
-"""Decorators for registering plugins
-
-"""
+"""Decorators for registering plugins"""
 
 # Standard library imports
 import functools
 import importlib
 import sys
 import textwrap
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    List,
-    NamedTuple,
-    Optional,
-    Set,
-    TypeVar,
-    overload,
-)
+from importlib import resources
+from typing import Any, Callable, NamedTuple, Optional, TypeVar, overload
+
+# Third party imports
+from typing_extensions import ParamSpec
 
 # PyPlugs imports
 from pyplugs import _exceptions
 
-# Use backport of importlib.resources if necessary
-try:
-    # Standard library imports
-    from importlib import resources
-except ImportError:  # pragma: nocover
-    # Third party imports
-    import importlib_resources as resources  # type: ignore
-
-
 # Type aliases
+P = ParamSpec("P")
 T = TypeVar("T")
-Plugin = Callable[..., Any]
 
 
 # Only expose decorated functions to the outside
 __all__ = []
 
 
-def expose(func: Callable[..., T]) -> Callable[..., T]:
+def expose(func: Callable[P, T]) -> Callable[P, T]:
     """Add function to __all__ so it will be exposed at the top level"""
     __all__.append(func.__name__)
     return func
 
 
-@expose
 class PluginInfo(NamedTuple):
     """Information about one plug-in"""
 
     package_name: str
     plugin_name: str
     func_name: str
-    func: Plugin
+    func: Callable[..., Any]
     description: str
     doc: str
     module_doc: str
-    sort_value: float
+    sort_value: int
     label: Optional[str]
 
 
 # Dictionary with information about all registered plug-ins
-_PLUGINS: Dict[str, Dict[str, Dict[str, PluginInfo]]] = {}
+_PLUGINS: dict[str, dict[str, dict[str, PluginInfo]]] = {}
 
 
 @overload
 def register(
-    func: None, *, sort_value: float, label: Optional[str]
-) -> Callable[[Plugin], Plugin]:
+    _func: None, *, sort_value: int, label: Optional[str]
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """Signature for using decorator with parameters"""
     ...  # pragma: nocover
 
 
 @overload
-def register(func: Plugin) -> Plugin:
+def register(_func: Callable[P, T]) -> Callable[P, T]:
     """Signature for using decorator without parameters"""
     ...  # pragma: nocover
 
 
 @expose
 def register(
-    _func: Optional[Plugin] = None,
+    _func: Optional[Callable[P, T]] = None,
     *,
-    sort_value: float = 0,
+    sort_value: int = 0,
     label: Optional[str] = None,
 ) -> Callable[..., Any]:
     """Decorator for registering a new plug-in"""
@@ -117,14 +99,14 @@ def register(
 
 
 @expose
-def names(package: str) -> List[str]:
+def names(package: str) -> list[str]:
     """List all plug-ins in one package"""
     _import_all(package)
     return sorted(_PLUGINS[package].keys(), key=lambda p: info(package, p).sort_value)
 
 
 @expose
-def funcs(package: str, plugin: str, label: Optional[str] = None) -> List[str]:
+def funcs(package: str, plugin: str, label: Optional[str] = None) -> list[str]:
     """List all functions in one plug-in"""
     _import(package, plugin)
     plugin_info = _PLUGINS[package][plugin]
@@ -132,7 +114,7 @@ def funcs(package: str, plugin: str, label: Optional[str] = None) -> List[str]:
 
 
 @expose
-def labels(package: str, plugin: str) -> Set[str]:
+def labels(package: str, plugin: str) -> set[str]:
     """List all labels in one plug-in"""
     _import(package, plugin)
     plugin_info = _PLUGINS[package][plugin]
@@ -191,7 +173,7 @@ def exists(package: str, plugin: str) -> bool:
 @expose
 def get(
     package: str, plugin: str, func: Optional[str] = None, label: Optional[str] = None
-) -> Plugin:
+) -> Callable[..., Any]:
     """Get a given plugin"""
     return info(package, plugin, func=func, label=label).func
 
@@ -219,11 +201,11 @@ def _import(package: str, plugin: str) -> None:
     try:
         importlib.import_module(plugin_module)
     except ImportError as err:
-        if repr(plugin_module) in err.msg:  # type: ignore
+        if repr(plugin_module) in err.msg:
             raise _exceptions.UnknownPluginError(
                 f"Plugin {plugin!r} not found in {package!r}"
             ) from None
-        elif repr(package) in err.msg:  # type: ignore
+        elif repr(package) in err.msg:
             raise _exceptions.UnknownPackageError(
                 f"Package {package!r} does not exist"
             ) from None
@@ -233,7 +215,7 @@ def _import(package: str, plugin: str) -> None:
 def _import_all(package: str) -> None:
     """Import all plugins in a package"""
     try:
-        all_resources = resources.contents(package)  # type: ignore
+        all_resources = resources.contents(package)
     except ImportError as err:
         raise _exceptions.UnknownPackageError(err) from None
 
@@ -252,19 +234,19 @@ def _import_all(package: str) -> None:
 
 
 @expose
-def names_factory(package: str) -> Callable[[], List[str]]:
+def names_factory(package: str) -> Callable[[], list[str]]:
     """Create a names() function for one package"""
     return functools.partial(names, package)
 
 
 @expose
-def funcs_factory(package: str) -> Callable[[str], List[str]]:
+def funcs_factory(package: str) -> Callable[[str], list[str]]:
     """Create a funcs() function for one package"""
     return functools.partial(funcs, package)
 
 
 @expose
-def labels_factory(package: str) -> Callable[[str], Set[str]]:
+def labels_factory(package: str) -> Callable[[str], set[str]]:
     """Create a labels() function for one package"""
     return functools.partial(labels, package)
 
@@ -282,7 +264,7 @@ def exists_factory(package: str) -> Callable[[str], bool]:
 
 
 @expose
-def get_factory(package: str) -> Callable[[str, Optional[str]], Plugin]:
+def get_factory(package: str) -> Callable[[str, Optional[str]], Callable[..., Any]]:
     """Create a get() function for one package"""
     return functools.partial(get, package)
 
