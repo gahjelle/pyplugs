@@ -1,17 +1,13 @@
 """Decorators for registering plugins"""
 
-import contextlib
-
 # Standard library imports
+import contextlib
 import functools
 import importlib
 import sys
 import textwrap
 from importlib import resources
-from typing import Any, Callable, NamedTuple, Optional, TypeVar, overload
-
-# Third party imports
-from typing_extensions import ParamSpec
+from typing import Any, Callable, NamedTuple, Optional, ParamSpec, TypeVar, overload
 
 # PyPlugs imports
 from pyplugs import _exceptions
@@ -273,4 +269,5 @@ def get_factory(package: str) -> Callable[[str, Optional[str]], Callable[..., An
 @expose
 def call_factory(package: str) -> Callable[..., Any]:
     """Create a call() function for one package"""
+    return functools.partial(call, package)
     return functools.partial(call, package)
