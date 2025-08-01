@@ -1,5 +1,5 @@
 [build-system]
-requires      = ["setuptools>=61"]
+requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -30,8 +30,14 @@ Home = "https://github.com/gahjelle/pyplugs"
 
 [dependency-groups]
 build = ["build>=1.2.2.post1", "twine>=6.1.0"]
-dev   = ["bumpver>=2024.1130", "interrogate>=1.7.0", "mypy>=1.15.0", "ruff>=0.11.11"]
-test  = ["pytest>=8.3.5", "pytest-cov>=6.1.1"]
+dev = [
+    "bumpver>=2024.1130",
+    "interrogate>=1.7.0",
+    "mypy>=1.15.0",
+    "pre-commit>=4.2.0",
+    "ruff>=0.11.11",
+]
+test = ["pytest>=8.3.5", "pytest-cov>=6.1.1"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pyplugs.__version__" }
@@ -40,16 +46,16 @@ version = { attr = "pyplugs.__version__" }
 [tool.interrogate]
 ignore-init-method = false
 ignore-init-module = false
-ignore-magic       = false
+ignore-magic = false
 ignore-semiprivate = false
-ignore-private     = false
-ignore-module      = false
-fail-under         = 100
-verbose            = 0
+ignore-private = false
+ignore-module = false
+fail-under = 100
+verbose = 0
 
 [tool.ruff]
 target-version = "py310"
-exclude        = [".git", "venv", "migrations", "node_modules"]
+exclude = [".git", "venv", "migrations", "node_modules"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "RUF100"]
@@ -57,18 +63,18 @@ ignore = []
 
 [tool.mypy]
 python_version = "3.10"
-strict         = true
+strict = true
 
 [tool.bumpver]
 current_version = "v0.5.2"
 version_pattern = "vMAJOR.MINOR.PATCH"
-commit_message  = "bump version {old_version} -> {new_version}"
-tag_message     = "{new_version}"
-tag_scope       = "default"
-commit          = true
-tag             = true
-push            = false
+commit_message = "bump version {old_version} -> {new_version}"
+tag_message = "{new_version}"
+tag_scope = "default"
+commit = true
+tag = true
+push = true
 
 [tool.bumpver.file_patterns]
-"pyproject.toml"          = ['current_version = "{version}"']
+"pyproject.toml" = ['current_version = "{version}"']
 "src/pyplugs/__init__.py" = ['__version__ = "MAJOR.MINOR.PATCH"']
