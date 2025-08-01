@@ -1,1 +1,1 @@
-"""Sample plugins used by the pyplugs tests"""
+"""Sample plugins used by the pyplugs tests."""

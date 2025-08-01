@@ -4,10 +4,12 @@ _Decorator based plug-in architecture for Python_
 
 [![Latest version](https://img.shields.io/pypi/v/pyplugs.svg)](https://pypi.org/project/pyplugs/)
 [![Python versions](https://img.shields.io/pypi/pyversions/pyplugs.svg)](https://pypi.org/project/pyplugs/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
+[![License](https://img.shields.io/pypi/l/pyplugs.svg)](https://pypi.org/project/pyplugs/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Linted](https://github.com/gahjelle/pyplugs/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/gahjelle/pyplugs/actions/workflows/lint.yml)
+[![Tested with Pytest](https://github.com/gahjelle/pyplugs/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/gahjelle/pyplugs/actions/workflows/test.yml)
+[![Type checked with mypy](https://img.shields.io/badge/type%20checked-mypy-green)](http://mypy-lang.org/)
 [![Interrogate DocStrings](https://raw.githubusercontent.com/gahjelle/pyplugs/main/docs/images/interrogate_badge.svg)](https://interrogate.readthedocs.io/)
-[![CircleCI](https://circleci.com/gh/gahjelle/pyplugs.svg?style=shield)](https://circleci.com/gh/gahjelle/pyplugs)
 
 
 ## Installing PyPlugs
@@ -24,12 +26,4 @@ PyPlugs is available at [PyPI](https://pypi.org/project/pyplugs/). You can insta
 
 ## Installing From Source
 
-You can always download the [latest version of PyPlugs from GitHub](https://github.com/gahjelle/pyplugs). PyPlugs uses [Flit](https://flit.readthedocs.io/) as a setup tool.
-
-To install PyPlugs from the downloaded source, run Flit:
-
-    $ python -m flit install --deps production
-
-If you want to change and play with the PyPlugs source code, you should install it in editable mode:
-
-    $ python -m flit install --symlink
+You can always download the [latest version of PyPlugs from GitHub](https://github.com/gahjelle/pyplugs).
