@@ -31,13 +31,13 @@ Home = "https://github.com/gahjelle/pyplugs"
 [dependency-groups]
 build = ["build>=1.2.2.post1", "twine>=6.1.0"]
 dev = [
-    "bumpver>=2024.1130",
+    "bumpver>=2025.1131",
     "interrogate>=1.7.0",
-    "mypy>=1.15.0",
+    "mypy>=1.17.1",
     "pre-commit>=4.2.0",
-    "ruff>=0.11.11",
+    "ruff>=0.12.7",
 ]
-test = ["pytest>=8.3.5", "pytest-cov>=6.1.1"]
+test = ["pytest>=8.4.1", "pytest-cov>=6.2.1"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pyplugs.__version__" }
