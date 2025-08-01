@@ -1,4 +1,4 @@
-name: Publish PyPlugs to PyPI
+name: publish to PyPI and GitHub
 
 on:
   push:

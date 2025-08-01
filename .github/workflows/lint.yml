@@ -1,4 +1,4 @@
-name: Lint Pyplugs
+name: lint and format
 
 on:
   pull_request:

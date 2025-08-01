@@ -1,4 +1,4 @@
-name: Test Pyplugs with Pytest
+name: tests
 
 on:
   pull_request:
