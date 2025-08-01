@@ -30,4 +30,4 @@ jobs:
           python -m pip install --group test
           python -m pip install .
       - name: Run Pytest
-        run: pytest --cov=src/pyplugs --cov-fail-under=100 --cov-report=term-missing
+        run: pytest --cov=pyplugs --cov-fail-under=100 --cov-report=term-missing

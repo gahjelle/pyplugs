@@ -1,1 +1,1 @@
-"""Tests for the pyplugs package"""
+"""Tests for the pyplugs package."""
