@@ -34,6 +34,7 @@ build = ["build>=1.2.2.post1", "twine>=6.1.0"]
 dev = [
     "bumpver>=2025.1131",
     "interrogate>=1.7.0",
+    "ipython>=8.37.0",
     "mypy>=1.17.1",
     "pre-commit>=4.2.0",
     "ruff>=0.12.7",
@@ -70,7 +71,8 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 # PLR2004: Magic value used in comparison (OK for tests)
 # S101: Use of `assert` (OK for tests)
-"tests/test_*.py" = ["PLR2004", "S101"]
+# UP018: Replace with string/integer/... literal (OK for typed tests)
+"tests/test_*.py" = ["PLR2004", "S101", "UP018"]
 
 
 [tool.mypy]

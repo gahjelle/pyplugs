@@ -249,3 +249,52 @@ def test_call_factory(plugin_package: str) -> None:
     factory_call = call(plugin_name)
     pyplugs_call = pyplugs.call(plugin_package, plugin=plugin_name)
     assert factory_call == pyplugs_call
+
+
+def test_typed(plugin_package: str) -> None:
+    """Test that typed functions can be called."""
+    type_checker_test_get_typed(plugin_package)
+    type_checker_test_call_typed(plugin_package)
+    type_checker_test_call_typed_with_complex_type(plugin_package)
+
+
+def type_checker_test_get_typed(plugin_package: str) -> str:
+    """Test that get_typed can be called. Return a value to type check.
+
+    This function is not called by pytest, but checked by the type checker.
+    """
+    plugin_name = "plugin_types"
+    func = pyplugs.get_typed(
+        plugin_package, plugin_name, func="plugin_string", _return_type=str()
+    )
+    return func()
+
+
+def type_checker_test_call_typed(plugin_package: str) -> str:
+    """Test that call_typed can be called. Return a value to type check.
+
+    This function is not called by pytest, but checked by the type checker.
+    """
+    plugin_name = "plugin_types"
+    value = pyplugs.call_typed(
+        plugin_package, plugin_name, func="plugin_string", _return_type=str()
+    )
+    assert isinstance(value, str)
+    return value
+
+
+def type_checker_test_call_typed_with_complex_type(
+    plugin_package: str,
+) -> tuple[str, int]:
+    """Test that call_typed can be given a complex return type.
+
+    This function is not called by pytest, but checked by the type checker.
+    """
+    plugin_name = "plugin_types"
+    value = pyplugs.call_typed(
+        plugin_package, plugin_name, func="plugin_tuple", _return_type=(str(), int())
+    )
+    assert isinstance(value, tuple)
+    assert isinstance(value[0], str)
+    assert isinstance(value[1], int)
+    return value
