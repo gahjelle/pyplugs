@@ -16,12 +16,14 @@ from pyplugs import _exceptions
 __all__ = [
     "call",
     "call_factory",
+    "call_typed",
     "exists",
     "exists_factory",
     "funcs",
     "funcs_factory",
     "get",
     "get_factory",
+    "get_typed",
     "info",
     "info_factory",
     "labels",
@@ -194,6 +196,17 @@ def get(
     return info(package, plugin, func=func, label=label).func
 
 
+def get_typed(
+    package: str,
+    plugin: str,
+    _return_type: T,
+    func: str | None = None,
+    label: str | None = None,
+) -> Callable[..., T]:
+    """Get a given plugin. The _return_type help type checkers enforce return types."""
+    return get(package, plugin, func=func, label=label)
+
+
 def call(
     package: str,
     plugin: str,
@@ -204,6 +217,22 @@ def call(
 ) -> Any:  # noqa: ANN401
     """Call the given plugin."""
     plugin_func = get(package, plugin, func=func, label=label)
+    return plugin_func(*args, **kwargs)
+
+
+def call_typed(
+    package: str,
+    plugin: str,
+    _return_type: T,
+    func: str | None = None,
+    label: str | None = None,
+    *args: Any,  # noqa: ANN401
+    **kwargs: Any,  # noqa: ANN401
+) -> T:
+    """Call the given plugin, expect a given return type."""
+    plugin_func = get_typed(
+        package, plugin, _return_type=_return_type, func=func, label=label
+    )
     return plugin_func(*args, **kwargs)
 
 
