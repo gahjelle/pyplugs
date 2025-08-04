@@ -4,7 +4,7 @@ _Decorator based plug-in architecture for Python_
 
 [![Latest version](https://img.shields.io/pypi/v/pyplugs.svg)](https://pypi.org/project/pyplugs/)
 [![Python versions](https://img.shields.io/pypi/pyversions/pyplugs.svg)](https://pypi.org/project/pyplugs/)
-[![License](https://img.shields.io/pypi/l/pyplugs.svg)](https://pypi.org/project/pyplugs/)
+[![License](https://img.shields.io/pypi/l/pyplugs.svg)](https://github.com/gahjelle/pyplugs/blob/main/LICENSE)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Linted](https://github.com/gahjelle/pyplugs/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/gahjelle/pyplugs/actions/workflows/lint.yml)
 [![Tested with Pytest](https://github.com/gahjelle/pyplugs/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/gahjelle/pyplugs/actions/workflows/test.yml)
