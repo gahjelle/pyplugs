@@ -80,7 +80,7 @@ python_version = "3.10"
 strict = true
 
 [tool.bumpver]
-current_version = "v0.5.3"
+current_version = "v0.5.4"
 version_pattern = "vMAJOR.MINOR.PATCH"
 commit_message = "bump version {old_version} -> {new_version}"
 tag_message = "{new_version}"
