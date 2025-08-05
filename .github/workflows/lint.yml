@@ -31,4 +31,4 @@ jobs:
           python -m interrogate src/ tests/
       - name: Run mypy
         run: |
-          python -m mypy src/
+          python -m mypy src/ tests/
