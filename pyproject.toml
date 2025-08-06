@@ -34,6 +34,7 @@ build = ["build>=1.2.2.post1", "twine>=6.1.0"]
 ci = ["interrogate>=1.7.0", "mypy>=1.17.1", "pytest>=8.4.1", "ruff>=0.12.7"]
 dev = [
     { include-group = "ci" },
+    { include-group = "test" },
     "bumpver>=2025.1131",
     "ipython>=8.37.0",
     "pre-commit>=4.2.0",

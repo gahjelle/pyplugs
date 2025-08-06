@@ -11,7 +11,6 @@ repos:
 
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    # Ruff version.
     rev: v0.12.7
     hooks:
       - id: ruff-check
@@ -24,9 +23,13 @@ repos:
       - id: interrogate
         args: [--quiet, --config=pyproject.toml]
 
-
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.17.1
     hooks:
       - id: mypy
         additional_dependencies: [pytest>=8.4.1]
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.7
+    hooks:
+      - id: actionlint
