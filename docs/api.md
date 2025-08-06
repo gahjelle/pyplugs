@@ -11,4 +11,3 @@ Coming soon ...
 - **Function:**
 
 ## Registering Plug-ins
-
