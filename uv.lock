@@ -880,6 +880,12 @@ build = [
     { name = "build" },
     { name = "twine" },
 ]
+ci = [
+    { name = "interrogate" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
 dev = [
     { name = "bumpver" },
     { name = "interrogate" },
@@ -887,6 +893,7 @@ dev = [
     { name = "ipython", version = "9.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "mypy" },
     { name = "pre-commit" },
+    { name = "pytest" },
     { name = "ruff" },
 ]
 test = [
@@ -901,12 +908,19 @@ build = [
     { name = "build", specifier = ">=1.2.2.post1" },
     { name = "twine", specifier = ">=6.1.0" },
 ]
+ci = [
+    { name = "interrogate", specifier = ">=1.7.0" },
+    { name = "mypy", specifier = ">=1.17.1" },
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "ruff", specifier = ">=0.12.7" },
+]
 dev = [
     { name = "bumpver", specifier = ">=2025.1131" },
     { name = "interrogate", specifier = ">=1.7.0" },
     { name = "ipython", specifier = ">=8.37.0" },
     { name = "mypy", specifier = ">=1.17.1" },
     { name = "pre-commit", specifier = ">=4.2.0" },
+    { name = "pytest", specifier = ">=8.4.1" },
     { name = "ruff", specifier = ">=0.12.7" },
 ]
 test = [
